@@ -1,0 +1,19 @@
+# Ignore git history and Docker files
+.git
+Dockerfile
+.dockerignore
+
+# Ignore binaries and build artifacts
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Vendor and cache directories
+vendor/
+**/node_modules
+
+# Ignore local env files
+.env
