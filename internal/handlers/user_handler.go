@@ -63,7 +63,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 	}
 
 	// Definir cookie
-	c.SetCookie("auth_token", token, 24*60*60, "/", "", false, true) // 24 horas, path: /, secure: false, httpOnly: true
+	c.SetCookie("auth_token", token, 24*60*60, "/", "", true, true) // 24 horas, path: /, secure: false, httpOnly: true
 
 	c.JSON(http.StatusOK, gin.H{
 		"user": models.UserResponse{
