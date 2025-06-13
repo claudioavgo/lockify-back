@@ -20,12 +20,10 @@ type Config struct {
 }
 
 func LoadConfig() (*Config, error) {
-	err := godotenv.Load()
-	if err != nil {
-		return nil, fmt.Errorf("erro ao carregar .env: %v", err)
-	}
+	// Tenta carregar o .env, mas não falha se não existir
+	_ = godotenv.Load()
 
-	return &Config{
+	config := &Config{
 		DBHost:     os.Getenv("DB_HOST"),
 		DBPort:     os.Getenv("DB_PORT"),
 		DBUser:     os.Getenv("DB_USER"),
@@ -35,5 +33,33 @@ func LoadConfig() (*Config, error) {
 		ServerPort: os.Getenv("SERVER_PORT"),
 		ServerHost: os.Getenv("SERVER_HOST"),
 		JWTSecret:  os.Getenv("JWT_SECRET"),
-	}, nil
+	}
+
+	// Validação das variáveis críticas
+	if err := validateConfig(config); err != nil {
+		return nil, err
+	}
+
+	return config, nil
+}
+
+func validateConfig(cfg *Config) error {
+	requiredVars := map[string]string{
+		"DB_HOST":     cfg.DBHost,
+		"DB_PORT":     cfg.DBPort,
+		"DB_USER":     cfg.DBUser,
+		"DB_PASSWORD": cfg.DBPassword,
+		"DB_NAME":     cfg.DBName,
+		"SERVER_PORT": cfg.ServerPort,
+		"SERVER_HOST": cfg.ServerHost,
+		"JWT_SECRET":  cfg.JWTSecret,
+	}
+
+	for name, value := range requiredVars {
+		if value == "" {
+			return fmt.Errorf("variável de ambiente %s não está definida", name)
+		}
+	}
+
+	return nil
 }
