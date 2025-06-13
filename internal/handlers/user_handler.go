@@ -63,7 +63,18 @@ func (h *UserHandler) Login(c *gin.Context) {
 	}
 
 	// Definir cookie
-	c.SetCookie("auth_token", token, 24*60*60, "/", "", true, true) // 24 horas, path: /, secure: false, httpOnly: true
+	cookie := &http.Cookie{
+		Name:     "auth_token",
+		Value:    token,
+		Path:     "/",
+		Domain:   ".cxded.com",
+		MaxAge:   24 * 60 * 60,
+		Secure:   true,
+		HttpOnly: true,
+		SameSite: http.SameSiteNoneMode,
+	}
+
+	http.SetCookie(c.Writer, cookie)
 
 	c.JSON(http.StatusOK, gin.H{
 		"user": models.UserResponse{
