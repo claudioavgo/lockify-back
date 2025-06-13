@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
@@ -13,8 +15,12 @@ func SetupRoutes(db *gorm.DB, cfg *config.Config) *gin.Engine {
 	router := gin.Default()
 
 	// CORS
+	allowedOrigin := cfg.AllowedOrigin
+
+	fmt.Println("[ALLOWED_ORIGIN]", allowedOrigin)
+
 	router.Use(func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", cfg.AllowedOrigin)
+		c.Writer.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")

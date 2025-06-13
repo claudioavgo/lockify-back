@@ -45,14 +45,15 @@ func LoadConfig() (*Config, error) {
 
 func validateConfig(cfg *Config) error {
 	requiredVars := map[string]string{
-		"DB_HOST":     cfg.DBHost,
-		"DB_PORT":     cfg.DBPort,
-		"DB_USER":     cfg.DBUser,
-		"DB_PASSWORD": cfg.DBPassword,
-		"DB_NAME":     cfg.DBName,
-		"SERVER_PORT": cfg.ServerPort,
-		"SERVER_HOST": cfg.ServerHost,
-		"JWT_SECRET":  cfg.JWTSecret,
+		"DB_HOST":        cfg.DBHost,
+		"DB_PORT":        cfg.DBPort,
+		"DB_USER":        cfg.DBUser,
+		"DB_PASSWORD":    cfg.DBPassword,
+		"DB_NAME":        cfg.DBName,
+		"SERVER_PORT":    cfg.ServerPort,
+		"SERVER_HOST":    cfg.ServerHost,
+		"JWT_SECRET":     cfg.JWTSecret,
+		"ALLOWED_ORIGIN": cfg.AllowedOrigin,
 	}
 
 	for name, value := range requiredVars {
