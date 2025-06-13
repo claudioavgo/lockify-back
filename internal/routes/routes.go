@@ -4,16 +4,17 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
+	"lockify-back/internal/config"
 	"lockify-back/internal/handlers"
 	"lockify-back/internal/middleware"
 )
 
-func SetupRoutes(db *gorm.DB) *gin.Engine {
+func SetupRoutes(db *gorm.DB, cfg *config.Config) *gin.Engine {
 	router := gin.Default()
 
 	// CORS
 	router.Use(func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		c.Writer.Header().Set("Access-Control-Allow-Origin", cfg.AllowedOrigin)
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")

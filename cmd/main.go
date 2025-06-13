@@ -20,7 +20,7 @@ func main() {
 		log.Fatalf("Erro ao inicializar banco de dados: %v", err)
 	}
 
-	router := routes.SetupRoutes(db)
+	router := routes.SetupRoutes(db, cfg)
 
 	serverAddr := fmt.Sprintf("%s:%s", cfg.ServerHost, cfg.ServerPort)
 	log.Printf("Servidor iniciado em http://%s", serverAddr)

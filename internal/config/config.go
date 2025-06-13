@@ -8,34 +8,34 @@ import (
 )
 
 type Config struct {
-	DBHost     string
-	DBPort     string
-	DBUser     string
-	DBPassword string
-	DBName     string
-	DBSSLMode  string
-	ServerPort string
-	ServerHost string
-	JWTSecret  string
+	DBHost        string
+	DBPort        string
+	DBUser        string
+	DBPassword    string
+	DBName        string
+	DBSSLMode     string
+	ServerPort    string
+	ServerHost    string
+	JWTSecret     string
+	AllowedOrigin string
 }
 
 func LoadConfig() (*Config, error) {
-	// Tenta carregar o .env, mas não falha se não existir
 	_ = godotenv.Load()
 
 	config := &Config{
-		DBHost:     os.Getenv("DB_HOST"),
-		DBPort:     os.Getenv("DB_PORT"),
-		DBUser:     os.Getenv("DB_USER"),
-		DBPassword: os.Getenv("DB_PASSWORD"),
-		DBName:     os.Getenv("DB_NAME"),
-		DBSSLMode:  os.Getenv("DB_SSL_MODE"),
-		ServerPort: os.Getenv("SERVER_PORT"),
-		ServerHost: os.Getenv("SERVER_HOST"),
-		JWTSecret:  os.Getenv("JWT_SECRET"),
+		DBHost:        os.Getenv("DB_HOST"),
+		DBPort:        os.Getenv("DB_PORT"),
+		DBUser:        os.Getenv("DB_USER"),
+		DBPassword:    os.Getenv("DB_PASSWORD"),
+		DBName:        os.Getenv("DB_NAME"),
+		DBSSLMode:     os.Getenv("DB_SSL_MODE"),
+		ServerPort:    os.Getenv("SERVER_PORT"),
+		ServerHost:    os.Getenv("SERVER_HOST"),
+		JWTSecret:     os.Getenv("JWT_SECRET"),
+		AllowedOrigin: os.Getenv("ALLOWED_ORIGIN"),
 	}
 
-	// Validação das variáveis críticas
 	if err := validateConfig(config); err != nil {
 		return nil, err
 	}
