@@ -10,7 +10,6 @@ import (
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Obter token do cookie
 		token, err := c.Cookie("auth_token")
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token não fornecido"})
@@ -18,7 +17,6 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		// Validar token
 		claims, err := auth.ValidateToken(token)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
@@ -26,7 +24,6 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		// Adicionar claims ao contexto
 		c.Set("user_id", claims.UserID)
 		c.Set("email", claims.Email)
 

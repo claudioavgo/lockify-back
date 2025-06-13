@@ -22,19 +22,21 @@ type Habit struct {
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 
 	UserID uint `gorm:"not null" json:"user_id"`
+
+	HabitDayCheckIns []HabitDayCheckIn `gorm:"foreignKey:HabitID" json:"habit_day_check_ins"`
 }
 
 type HabitDayCheckIn struct {
 	ID uint `gorm:"primaryKey" json:"id"`
 
-	HabitID uint  `gorm:"not null" json:"habit_id"`
-	Habit   Habit `gorm:"foreignKey:HabitID" json:"habit"`
+	HabitID uint  `gorm:"not null" json:"-"`
+	Habit   Habit `gorm:"foreignKey:HabitID" json:"-"`
 
 	Date time.Time `gorm:"not null" json:"date"`
 
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
+	CreatedAt time.Time      `json:"-"`
+	UpdatedAt time.Time      `json:"-"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 
-	UserID uint `gorm:"not null" json:"user_id"`
+	UserID uint `gorm:"not null" json:"-"`
 }

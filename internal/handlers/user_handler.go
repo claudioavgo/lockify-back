@@ -36,33 +36,28 @@ func (h *UserHandler) Login(c *gin.Context) {
 		return
 	}
 
-	// Validar dados
 	if err := h.validate.Struct(req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Dados inválidos"})
 		return
 	}
 
-	// Buscar usuário
 	var user models.User
 	if err := h.db.Where("email = ?", req.Email).First(&user).Error; err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Credenciais inválidas"})
 		return
 	}
 
-	// Verificar senha
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Credenciais inválidas"})
 		return
 	}
 
-	// Gerar token
 	token, err := auth.GenerateToken(user.ID, user.Email)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao gerar token"})
 		return
 	}
 
-	// Definir cookie
 	cookie := &http.Cookie{
 		Name:     "auth_token",
 		Value:    token,
@@ -94,7 +89,6 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	// Validar usando o pacote validator
 	if err := h.validate.Struct(user); err != nil {
 		errors := make(map[string]string)
 		for _, err := range err.(validator.ValidationErrors) {
@@ -113,14 +107,12 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	// Verificar se o email já existe
 	var existingUser models.User
 	if err := h.db.Where("email = ?", user.Email).First(&existingUser).Error; err == nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Email já cadastrado"})
 		return
 	}
 
-	// Hash da senha
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao processar senha"})
@@ -128,7 +120,6 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 	}
 	user.Password = string(hashedPassword)
 
-	// Criar usuário
 	if err := h.db.Create(&user).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao criar usuário"})
 		return
@@ -167,7 +158,6 @@ func (h *UserHandler) GetUsers(c *gin.Context) {
 }
 
 func (h *UserHandler) GetMe(c *gin.Context) {
-	// Obter ID do usuário do contexto (definido pelo middleware de autenticação)
 	userID, exists := c.Get("user_id")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
@@ -180,7 +170,6 @@ func (h *UserHandler) GetMe(c *gin.Context) {
 		return
 	}
 
-	// Retornar dados do usuário sem a senha
 	userResponse := models.UserResponse{
 		ID:        user.ID,
 		Name:      user.Name,

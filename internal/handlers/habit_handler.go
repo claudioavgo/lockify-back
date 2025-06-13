@@ -62,7 +62,7 @@ func (h *HabitHandler) GetHabits(c *gin.Context) {
 		return
 	}
 
-	if err := h.db.Where("user_id = ?", userID).Find(&habits).Error; err != nil {
+	if err := h.db.Where("user_id = ?", userID).Preload("HabitDayCheckIns").Find(&habits).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar hábitos"})
 		return
 	}
@@ -95,7 +95,7 @@ func (h *HabitHandler) CheckInHabit(c *gin.Context) {
 	startOfDay := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
 	endOfDay := startOfDay.Add(24 * time.Hour).Add(-time.Nanosecond)
 
-	if err := h.db.Where("user_id = ? AND habit_id = ? AND date >= ?",
+	if err := h.db.Where("user_id = ? AND habit_id = ? AND date >= ? AND date <= ?",
 		userID, habitID, startOfDay, endOfDay).First(&existingCheckIn).Error; err == nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Hábito já foi marcado como completado hoje"})
 		return
@@ -129,11 +129,10 @@ func (h *HabitHandler) GetDayHabits(c *gin.Context) {
 	startOfDay := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
 	endOfDay := startOfDay.Add(24 * time.Hour).Add(-time.Nanosecond)
 
-	date := now.Format("2006-01-02")
-	dayOfWeek := now.Format("Mon") // Retorna a abreviação do dia (Mon, Tue, etc)
+	dayOfWeek := now.Format("Mon")
 
-	if err := h.db.Where("user_id = ? AND is_active = ? AND starts_at <= ? AND days_of_week LIKE ?",
-		userID, true, date, "%"+dayOfWeek+"%").Find(&habits).Error; err != nil {
+	if err := h.db.Where("user_id = ? AND is_active = ? AND days_of_week LIKE ?",
+		userID, true, "%"+dayOfWeek+"%").Find(&habits).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar hábitos"})
 		return
 	}
