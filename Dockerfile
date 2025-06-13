@@ -1,14 +1,22 @@
-FROM golang:1.22-alpine
+FROM golang:1.22-alpine AS builder
+WORKDIR /src
 
-WORKDIR /app
-
+# Cache dependencies first
 COPY go.mod go.sum ./
 RUN go mod download
 
+# Copy the source
 COPY . .
 
-RUN go build -o gymapp-back ./cmd/main.go
+# Build the binary statically
+RUN CGO_ENABLED=0 go build -o lockify ./cmd/main.go
 
+# Final image
+FROM alpine:3.18
+RUN adduser -D -g '' appuser
+WORKDIR /app
+COPY --from=builder /src/lockify ./
+
+USER appuser
 EXPOSE 8080
-
-CMD ["./gymapp-back"]
+CMD ["./lockify"]
