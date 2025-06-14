@@ -62,7 +62,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 		Name:     "auth_token",
 		Value:    token,
 		Path:     "/",
-		Domain:   ".cxded.com",
+		Domain:   "localhost",
 		MaxAge:   24 * 60 * 60,
 		Secure:   true,
 		HttpOnly: true,
