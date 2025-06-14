@@ -9,18 +9,21 @@ import (
 	"gorm.io/gorm"
 
 	"lockify-back/internal/auth"
+	"lockify-back/internal/config"
 	"lockify-back/internal/models"
 )
 
 type UserHandler struct {
 	db       *gorm.DB
 	validate *validator.Validate
+	cfg      *config.Config
 }
 
-func NewUserHandler(db *gorm.DB) *UserHandler {
+func NewUserHandler(db *gorm.DB, cfg *config.Config) *UserHandler {
 	return &UserHandler{
 		db:       db,
 		validate: validator.New(),
+		cfg:      cfg,
 	}
 }
 
@@ -62,7 +65,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 		Name:     "auth_token",
 		Value:    token,
 		Path:     "/",
-		Domain:   "localhost",
+		Domain:   h.cfg.AllowedOriginDomain,
 		MaxAge:   24 * 60 * 60,
 		Secure:   true,
 		HttpOnly: true,

@@ -32,7 +32,7 @@ func SetupRoutes(db *gorm.DB, cfg *config.Config) *gin.Engine {
 	})
 
 	// Handlers
-	userHandler := handlers.NewUserHandler(db)
+	userHandler := handlers.NewUserHandler(db, cfg)
 	habitHandler := handlers.NewHabitHandler(db)
 	exerciseHandler := handlers.NewExerciseHandler(db)
 	feedbackHandler := handlers.NewFeedbackHandler(db)
